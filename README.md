@@ -7,6 +7,12 @@ A **single elimation bracket** built using canvas and jquery.
 Example
 -------
 
+### Dependencies
+
+**jquery.actual**
+to get the actual width/height of invisible DOM elements with jQuery.
+**download**: https://github.com/dreamerslab/jquery.actual
+
 ### HTML
 
 ```html

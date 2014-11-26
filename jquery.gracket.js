@@ -82,13 +82,12 @@
           // create games in round
           game_count = data[r].length;    
           for (var g=0; g < game_count; g++) {
-          
+
             var 
               game_html = helpers.build.game(this.gracket.settings),
-              outer_height = container.find("." + this.gracket.settings.gameClass).outerHeight(true),
+              outer_height = container.find("." + this.gracket.settings.gameClass).actual('outerHeight', { includeMargin : true }),
               spacer = helpers.build.spacer(this.gracket.settings, outer_height, r, (r !== 0 && g === 0) ? true : false)
             ;
-            
             // append spacer
             if (g % 1 == 0 && r !== 0) round_html.append(spacer);
             
@@ -102,7 +101,7 @@
               var team_html = helpers.build.team(data[r][g][t], this.gracket.settings);
               game_html.append(team_html);
 
-              var team_width = team_html.outerWidth(true);
+              var team_width = team_html.actual('outerWidth', { includeMargin : true });
               if (max_round_width[r] === undefined || max_round_width[r] < team_width)
                   max_round_width[r] = team_width;
 
@@ -113,7 +112,7 @@
                 game_html.prev().remove()
                 
                 // align winner
-                helpers.align.winner(game_html, this.gracket.settings, game_html.parent().prev().children().eq(0).height());
+                helpers.align.winner(game_html, this.gracket.settings, game_html.parent().prev().children().eq(0).actual('height'));
 
                 // init the listeners after gracket is built
                 helpers.listeners(this.gracket.settings, data, game_html.parent().prev().children().eq(1));
@@ -160,6 +159,7 @@
           });
         },
         spacer : function(node, yOffset, r, isFirst){
+          
           return spacer = $("<div />", {
             "class" : node.spacerClass
           }).css({
@@ -193,11 +193,11 @@
         canvas : {
           resize : function(node){
             var canvas = document.getElementById(node.canvasId);
-            canvas.height = container.innerHeight();
-            canvas.width = container.innerWidth();
+            canvas.height = container.actual('innerHeight');
+            canvas.width = container.actual('innerWidth');
             $(canvas).css({
-              height : container.innerHeight(),
-              width : container.innerWidth(),
+              height : container.actual('innerHeight'),
+              width : container.actual('innerWidth'),
               zIndex : 1,
               pointerEvents : "none"
             });
@@ -217,7 +217,7 @@
             // set starting position -- will default to zero            
             var
               _itemWidth = max_round_width[0],
-              _itemHeight = game_html.outerHeight(true),
+              _itemHeight = game_html.actual('outerHeight', { includeMargin : true }),
               _paddingLeft = (parseInt(container.css("paddingLeft")) || 0),
               _paddingTop = (parseInt(container.css("paddingTop")) || 0),
               _marginBottom = (parseInt(game_html.css("marginBottom")) || 0),
@@ -225,8 +225,8 @@
               _marginRight = (parseInt(container.find("> div").css("marginRight")) || 0),           
               _cornerRadius = node.cornerRadius,
               _lineGap = node.canvasLineGap,
-              _playerGap = (game_html.height() - 2 * game_html.find("> div").eq(1).height())
-              _playerHt = game_html.find("> div").eq(1).height(),
+              _playerGap = (game_html.actual('height') - 2 * game_html.find("> div").eq(1).actual('height'))
+              _playerHt = game_html.find("> div").eq(1).actual('height'),
               _totalItemWidth = 0
             ;
 
@@ -262,8 +262,8 @@
             if (ifOneGame) {
                 var _ref = $("." + node.gameClass);
                 var _item = _ref.eq( _ref.length - 1 );
-                _itemHeight = _item.outerHeight(true);
-                _itemWidth = _item.outerWidth(true);
+                _itemHeight = _item.actual('outerHeight', { includeMargin : true });
+                _itemWidth = _item.actual('outerWidth', { includeMargin : true });
             };
 
             while (p >= 1) {
@@ -275,7 +275,7 @@
                 var 
                   xInit = (ifOneGame) ? (_itemWidth + _paddingLeft) : (_startingLeftPos + _totalItemWidth + i *_marginRight),
                   xDisp = r * _marginRight,
-                  yInit = ((Math.pow(2, i-1) - 0.5) * (i && 1) + j * Math.pow(2, i)) * _itemHeight + _paddingTop + ((ifOneGame) ? (_ref.find("> div").eq(1).height()) : (_playerHt)) + _playerGap/2
+                  yInit = ((Math.pow(2, i-1) - 0.5) * (i && 1) + j * Math.pow(2, i)) * _itemHeight + _paddingTop + ((ifOneGame) ? (_ref.find("> div").eq(1).actual('height')) : (_playerHt)) + _playerGap/2
                 ;
 
                 if (p > 1) {
@@ -338,7 +338,7 @@
       align : {
         winner : function(game_html, node, yOffset){
           var ifOneGame = (game_html.parent().siblings().not("canvas").length === 1) ? true : false;
-          var offset = ifOneGame ? yOffset - (game_html.height() + (game_html.height() / 2)) : yOffset + (game_html.height() / 2);
+          var offset = ifOneGame ? yOffset - (game_html.actual('height') + (game_html.actual('height') / 2)) : yOffset + (game_html.actual('height') / 2);
           return game_html.addClass(node.winnerClass).css({ 
             "margin-top" : offset
           });
